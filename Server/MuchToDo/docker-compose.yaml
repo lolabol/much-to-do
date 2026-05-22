@@ -3,55 +3,58 @@ services:
     image: mongo:8.0
     container_name: mongodb
     restart: unless-stopped
+    entrypoint:
+      - bash
+      - -c
+      - |
+        cp /data/keyfile/mongodb.key /tmp/mongodb.key
+        chmod 400 /tmp/mongodb.key
+        chown mongodb:mongodb /tmp/mongodb.key
+        exec mongod --replSet rs0 --bind_ip_all --keyFile /tmp/mongodb.key
     ports:
-      - "${MONGO_PORT:-27017}:27017"
+      - "27017:27017"
     environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:-root}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-example}
-      MONGO_INITDB_DATABASE: ${DB_NAME:-much_todo_db}
-    # Use a command that sets permissions and then starts mongod
-    command:
-      [
-        "--replSet",
-        "rs0",
-        "--bind_ip_all",
-        "--keyFile",
-        "/data/keyfile/mongodb.key",
-      ]
-    # Create a keyfile and mount it to the container
-    # openssl rand -base64 756 > mongodb.key && chmod 400 mongodb.key
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: much_todo_db
     volumes:
       - mongo_data:/data/db
       - mongodb_config:/data/configdb
-      # Mount the keyfile to a standard config location
       - ./mongodb.key:/data/keyfile/mongodb.key:ro
     healthcheck:
-      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'${MONGO_HOST:-mongodb}:27017'}]}) }" | mongosh --port 27017 -u ${MONGO_INITDB_ROOT_USERNAME:-root} -p ${MONGO_INITDB_ROOT_PASSWORD:-example} --authenticationDatabase admin --quiet
+      test: >
+        echo "try { rs.status() } catch (err) {
+        rs.initiate({_id:'rs0',members:[{_id:0,host:'mongodb:27017'}]}) }"
+        | mongosh --port 27017 --quiet
       interval: 10s
       timeout: 10s
       retries: 5
-      start_period: 40s
+      start_period: 60s
     networks:
       - backend
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
 
-  mongo-express:
-    image: mongo-express:1.0.2
-    container_name: mongo-express
+  backend:
+    build: .
+    container_name: backend-api
     restart: unless-stopped
-    depends_on:
-      - mongodb
     ports:
-      - "8081:8081"
+      - "8080:8080"
     environment:
-      # ME_CONFIG_MONGODB_SERVER: ${MONGO_HOST:-mongodb}
-      # ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_INITDB_ROOT_USERNAME:-root}
-      # ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:-example}
-      ME_CONFIG_MONGODB_URL: mongodb://${MONGO_INITDB_ROOT_USERNAME:-root}:${MONGO_INITDB_ROOT_PASSWORD:-example}@mongodb:27017/?authSource=admin&replicaSet=rs0&directConnection=true
-
-      ME_CONFIG_BASICAUTH_USERNAME: ${ME_CONFIG_BASICAUTH_USERNAME:-admin}
-      ME_CONFIG_BASICAUTH_PASSWORD: ${ME_CONFIG_BASICAUTH_PASSWORD:-admin123}
+      PORT: "8080"
+      MONGO_URI: "mongodb://root:example@mongodb:27017/much_todo_db?authSource=admin&replicaSet=rs0"
+      DB_NAME: "much_todo_db"
+      JWT_SECRET_KEY: "your-super-secret-key-that-is-long-and-random"
+      JWT_EXPIRATION_HOURS: "72"
+      LOG_LEVEL: "DEBUG"
+      LOG_FORMAT: "json"
+      ENABLE_CACHE: "true"
+      REDIS_ADDR: "redis:6379"
+      REDIS_PASSWORD: ""
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_started
     networks:
       - backend
 
@@ -60,10 +63,24 @@ services:
     container_name: redis
     restart: unless-stopped
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - "6379:6379"
     command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis_data:/data
+    networks:
+      - backend
+
+  mongo-express:
+    image: mongo-express:1.0.2
+    container_name: mongo-express
+    restart: unless-stopped
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_MONGODB_URL: "mongodb://root:example@mongodb:27017/?authSource=admin&replicaSet=rs0&directConnection=true"
     networks:
       - backend
 
@@ -76,7 +93,7 @@ services:
     ports:
       - "8082:8081"
     environment:
-      - REDIS_HOSTS=local:${REDIS_HOST:-redis}:${REDIS_PORT:-6379}
+      REDIS_HOSTS: "local:redis:6379"
     networks:
       - backend
 
