@@ -41,6 +41,23 @@ container-assessment/
 ### Build the Docker image
 ./scripts/docker-build.sh
 
+![](https://github.com/lolabol/much-to-do/blob/feature/backend-only/Server/MuchToDo/evidence/docker%20compose%20build.png?raw=true)
+
+docker images 
+
+![](https://github.com/lolabol/much-to-do/blob/feature/backend-only/Server/MuchToDo/evidence/docker%20images.png?raw=true)
+
+docker compose ps
+
+![](https://github.com/lolabol/much-to-do/blob/feature/backend-only/Server/MuchToDo/evidence/docker%20compose%20ps.png?raw=true)
+
+## Check Docker Logs 
+
+docker compose logs
+
+![](https://github.com/lolabol/much-to-do/blob/feature/backend-only/Server/MuchToDo/evidence/docker%20compose%20logs.png?raw=true)
+
+
 ### Run with Docker Compose
 ./scripts/docker-run.sh
 
@@ -54,6 +71,8 @@ curl http://localhost:8080/health
 ### Create the Kind cluster
 kind create cluster --name startuptech
 
+![](https://github.com/lolabol/much-to-do/blob/feature/backend-only/Server/MuchToDo/evidence/kind%20get%20clusters.png?raw=true)
+
 ### Deploy to Kubernetes
 ./scripts/k8s-deploy.sh
 
@@ -61,11 +80,17 @@ kind create cluster --name startuptech
 kubectl get pods -n muchtodo
 kubectl get services -n muchtodo
 
+![](https://github.com/lolabol/much-to-do/blob/feature/backend-only/Server/MuchToDo/evidence/kubectl%20get%20pods.png?raw=true)
+
+![](https://github.com/lolabol/much-to-do/blob/feature/backend-only/Server/MuchToDo/evidence/kubectl%20get%20services.png?raw=true)
+
 ### Access the application
 The app is accessible via NodePort at:
 curl http://172.18.0.2:30080/health
 
 Expected response: Cache: ok, database: ok
+
+![](https://github.com/lolabol/much-to-do/blob/feature/backend-only/Server/MuchToDo/evidence/App%20via%20docker%20compose.png?raw=true)
 
 ### Cleanup
 ./scripts/k8s-cleanup.sh
@@ -87,3 +112,5 @@ Endpoint        | Method | Description
 /users/:id      | GET    | Get a user
 /users/:id      | PUT    | Update a user
 /users/:id      | DELETE | Delete a user
+
+By Omolola Eyanuku -ALT/SOE/025/5119
