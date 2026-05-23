@@ -30,6 +30,11 @@ container-assessment/
 │   └── k8s-cleanup.sh
 └── README.md
 
+
+![](https://github.com/lolabol/much-to-do/blob/feature/backend-only/Server/tree.png?raw=true)
+
+
+
 ## Prerequisites
 - Docker
 - Docker Compose
