@@ -34,7 +34,7 @@ jobs:
         run: |
           go vet ./...
 
-     - name: Vulnerability scan
+      - name: Vulnerability scan
         working-directory: Server/MuchToDo
         run: |
           go install golang.org/x/vuln/cmd/govulncheck@latest
