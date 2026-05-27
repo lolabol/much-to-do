@@ -101,8 +101,8 @@ jobs:
 
       - name: Wait for deployment
         run: |
-          aws autoscaling wait \
-            --auto-scaling-group-name starttech-asg
+          echo "Waiting for instance refresh to complete..."
+          sleep 60
 
       - name: Smoke test
         run: |
