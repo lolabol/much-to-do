@@ -1,4 +1,4 @@
-// starttech frontend - CI/CD pipeline test v2
+// starttech frontend - CI/CD pipeline test v3
 
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { useAuth } from '@/hooks/useAuth'
