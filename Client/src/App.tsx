@@ -1,3 +1,5 @@
+// starttech frontend - CI/CD pipeline test
+
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { useAuth } from '@/hooks/useAuth'
 import { routeTree } from './routeTree.gen'
