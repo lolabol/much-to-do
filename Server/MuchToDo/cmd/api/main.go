@@ -1,4 +1,4 @@
-// StartTech Backend API - CI/CD Pipeline Test v2
+// StartTech Backend API - CI/CD Pipeline Test v3
 // @title           MuchToDo API
 // @version         1.0
 // @description     This is an API for MuchToDo application with user authentication.
