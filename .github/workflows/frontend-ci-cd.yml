@@ -46,7 +46,7 @@ jobs:
           name: frontend-build
           path: Client/dist
 
-deploy:
+  deploy:
     name: Deploy to Cloudflare Pages
     runs-on: ubuntu-latest
     needs: build
