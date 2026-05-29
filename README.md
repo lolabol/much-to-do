@@ -47,6 +47,10 @@ starttech-application/
 - **Container Registry**: AWS ECR
 - **Load Balancer**: AWS ALB
 
+## CDN Solution: CloudFlare pages (Instead of AWS CloudFront) 
+
+AWS CloudFront was originally the planned CDN solution as specified in the assessment. However, my AWS account was restricted from using CloudFront. At first I raised a support ticket with AWS requesting CloudFront access and waited for days with no response from AWS support. I followed up and attempted live chat support to expedite the request. All my attempts were unsuccessful. 
+
 ## Prerequisites
 - Node.js v18 or higher
 - Go v1.21 or higher
