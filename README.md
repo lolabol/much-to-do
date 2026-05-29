@@ -39,6 +39,8 @@ starttech-application/
 └── README.md
 ```
 
+**Region**: us-east-1
+
 ## Tech Stack
 - **Frontend**: React + Vite, deployed to S3, served via CloudFlare Pages
 - **Backend**: Golang (Gin framework), deployed to EC2 via Docker
